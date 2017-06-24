@@ -1,0 +1,6 @@
+{
+  "parent": "com.kanomiya.mcmod.expbank:block/exp_plate",
+  "textures": {
+    "texture": "blocks/iron_block"
+  }
+}

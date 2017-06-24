@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "com.kanomiya.mcmod.expbank:exp_plate_off" },
+    "powered=true": { "model": "com.kanomiya.mcmod.expbank:exp_plate_on" }
+  }
+}

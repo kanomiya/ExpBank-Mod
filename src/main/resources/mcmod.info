@@ -1,0 +1,11 @@
+[
+{
+  "modid": "com.kanomiya.mcmod.expbank",
+  "name": "Exp Bank Mod",
+  "description": "",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://kanomiya.com",
+  "authorList": ["kanomiya"]
+}
+]
