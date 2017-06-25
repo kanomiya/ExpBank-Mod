@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -53,6 +55,15 @@ public class BlockExpPlate extends Block implements ITileEntityProvider {
     public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune) {
         TileEntityExpPlate tile = (TileEntityExpPlate) world.getTileEntity(pos);
         return (int) (tile.experience *.6d);
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (! worldIn.isRemote) {
+            TileEntityExpPlate tile = (TileEntityExpPlate) worldIn.getTileEntity(pos);
+            playerIn.sendMessage(new TextComponentString("Exp: " + tile.experience));
+        }
+        return true;
     }
 
     @Override

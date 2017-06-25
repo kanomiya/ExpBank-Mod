@@ -4,6 +4,5 @@ group = "com.kanomiya.mcmod.expbank" // http://maven.apache.org/guides/mini/guid
 archivesBaseName = "expbank"
 
 minecraft {
-    version = "1.12-14.21.0.2359"
-    // version = "1.11.2-13.20.0.2345"
+    version = "1.11.2-13.20.0.2345"
 }

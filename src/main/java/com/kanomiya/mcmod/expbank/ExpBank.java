@@ -44,6 +44,13 @@ public class ExpBank {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(EItems.exp_plate), new Object[] {
+                "III",
+                "QEQ",
+                'I', Items.IRON_INGOT,
+                'Q', Items.QUARTZ,
+                'E', Items.EMERALD
+        }));
         GameRegistry.registerTileEntity(TileEntityExpPlate.class, MOD_ID + ":exp_plate");
         ModelLoader.setCustomModelResourceLocation(EItems.exp_plate, 0, new ModelResourceLocation(new ResourceLocation(MOD_ID, "exp_plate"), "inventory"));
     }
@@ -87,19 +94,6 @@ public class ExpBank {
         public static void registerItems(RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
                 EItems.exp_plate
-            );
-        }
-
-        @SubscribeEvent
-        public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-            event.getRegistry().registerAll(
-                new ShapedOreRecipe(new ResourceLocation(MOD_ID, "exp_plate"), new ItemStack(EItems.exp_plate), new Object[] {
-                    "III",
-                    "QEQ",
-                    'I', Items.IRON_INGOT,
-                    'Q', Items.QUARTZ,
-                    'E', Items.EMERALD
-                }).setRegistryName(new ResourceLocation(MOD_ID, "exp_plate"))
             );
         }
 
