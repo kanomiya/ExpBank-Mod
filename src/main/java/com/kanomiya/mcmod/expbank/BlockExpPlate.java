@@ -151,6 +151,11 @@ public class BlockExpPlate extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, POWERED);
     }
