@@ -1,7 +1,6 @@
 package com.kanomiya.mcmod.expbank;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
@@ -15,8 +14,8 @@ public class TileEntityExpPlate extends TileEntity {
     public int experience;
     public int tick;
 
-    public TileEntityExpPlate(int limit) {
-        this.limit = limit;
+    public TileEntityExpPlate() {
+        limit = ExpBank.getTotalExp(31);
     }
 
     public void setData(int experience, int tick) {
@@ -43,6 +42,7 @@ public class TileEntityExpPlate extends TileEntity {
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound compound = super.getUpdateTag();
         compound.setInteger("experience", experience);
+        compound.setInteger("limit", limit);
         return compound;
     }
 

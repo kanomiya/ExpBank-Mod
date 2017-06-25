@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -28,7 +30,6 @@ import java.util.Random;
  * Created by kanomiya on 2017/06/25.
  */
 public class BlockExpPlate extends Block implements ITileEntityProvider {
-    private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0d, 0d, 0d, 0d, 0d, 0d);
     public static final PropertyBool POWERED = PropertyBool.create("powered");
 
     public BlockExpPlate() {
@@ -51,6 +52,21 @@ public class BlockExpPlate extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune) {
+        TileEntityExpPlate tile = (TileEntityExpPlate) world.getTileEntity(pos);
+        return (int) (tile.experience *.6d);
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (! worldIn.isRemote) {
+            TileEntityExpPlate tile = (TileEntityExpPlate) worldIn.getTileEntity(pos);
+            playerIn.sendMessage(new TextComponentString("Exp: " + tile.experience));
+        }
+        return true;
+    }
+
+    @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (entityIn instanceof EntityPlayer) {
             TileEntityExpPlate tile = (TileEntityExpPlate) worldIn.getTileEntity(pos);
@@ -64,22 +80,26 @@ public class BlockExpPlate extends Block implements ITileEntityProvider {
                 if (worldIn.isBlockPowered(pos)) {
                     if (tile.experience > 0) {
                         int exp = Math.min(player.xpBarCap(), tile.experience);
-                        player.addExperience(exp);
-                        tile.experience -= exp;
-                    }
+                        if (exp > 0) {
+                            player.addExperience(exp);
+                            tile.experience -= exp;
 
-                    flag = true;
+                            flag = true;
+                        }
+                    }
                 }
                 else if (player.experienceLevel > 0){
-                    int exp = player.xpBarCap();
-                    int rest = Integer.MAX_VALUE -tile.experience;
+                    int exp = ExpBank.getLevelCap(player.experienceLevel);
+                    int rest = tile.limit -tile.experience;
                     if (rest < exp) {
                         exp = rest;
                     }
 
-                    tile.experience += exp;
-                    player.addExperienceLevel(-1);
-                    flag = true;
+                    if (exp > 0) {
+                        tile.experience += exp;
+                        player.addExperienceLevel(-1);
+                        flag = true;
+                    }
                 }
 
                 if (flag) {
@@ -110,7 +130,7 @@ public class BlockExpPlate extends Block implements ITileEntityProvider {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityExpPlate(ExpBank.getTotalExp(30));
+        return new TileEntityExpPlate();
     }
 
 
