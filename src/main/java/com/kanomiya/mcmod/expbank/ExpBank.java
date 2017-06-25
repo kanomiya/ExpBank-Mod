@@ -7,6 +7,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.UUID;
 
@@ -26,37 +28,24 @@ import java.util.UUID;
 public class ExpBank {
     public static final String MOD_ID = "com.kanomiya.mcmod.expbank";
     public static final String MOD_NAME = "Exp Bank Mod";
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.1.1";
 
     private static DummyPlayer dummyPlayer;
 
-    @GameRegistry.ObjectHolder(MOD_ID)
     public static class EBlocks {
-        public static final Block exp_plate = null;
+        public static final Block exp_plate = new BlockExpPlate()
+                .setRegistryName(MOD_ID, "exp_plate")
+                .setUnlocalizedName(MOD_ID + ".exp_plate");
     }
-    @GameRegistry.ObjectHolder(MOD_ID)
     public static class EItems {
-        public static final Item exp_plate = null;
+        public static final Item exp_plate = new ItemBlock(EBlocks.exp_plate)
+                .setRegistryName(MOD_ID, "exp_plate");
     }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        if (event.getSide().isClient()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(EBlocks.exp_plate), 0, new ModelResourceLocation(new ResourceLocation(MOD_ID, "exp_plate"), "inventory"));
-        }
-
         GameRegistry.registerTileEntity(TileEntityExpPlate.class, MOD_ID + ":exp_plate");
-    }
-
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        GameRegistry.addShapedRecipe(new ItemStack(EItems.exp_plate), new Object[] {
-                "III",
-                "QEQ",
-                'I', Items.IRON_INGOT,
-                'Q', Items.QUARTZ,
-                'E', Items.EMERALD
-        });
+        ModelLoader.setCustomModelResourceLocation(EItems.exp_plate, 0, new ModelResourceLocation(new ResourceLocation(MOD_ID, "exp_plate"), "inventory"));
     }
 
     public static synchronized int getTotalExp(int level) {
@@ -90,17 +79,27 @@ public class ExpBank {
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event) {
             event.getRegistry().registerAll(
-                new BlockExpPlate()
-                        .setRegistryName(MOD_ID, "exp_plate")
-                        .setUnlocalizedName(MOD_ID + ".exp_plate")
+                EBlocks.exp_plate
             );
         }
 
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                    new ItemBlock(EBlocks.exp_plate)
-                            .setRegistryName(MOD_ID, "exp_plate")
+                EItems.exp_plate
+            );
+        }
+
+        @SubscribeEvent
+        public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+            event.getRegistry().registerAll(
+                new ShapedOreRecipe(new ResourceLocation(MOD_ID, "exp_plate"), new ItemStack(EItems.exp_plate), new Object[] {
+                    "III",
+                    "QEQ",
+                    'I', Items.IRON_INGOT,
+                    'Q', Items.QUARTZ,
+                    'E', Items.EMERALD
+                }).setRegistryName(new ResourceLocation(MOD_ID, "exp_plate"))
             );
         }
 
